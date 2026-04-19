@@ -25,7 +25,7 @@ A production-style Retrieval-Augmented Generation (RAG) system with:
 ### 1. Clone repo
 
 ```bash
-git clone https://github.com/your-username/rag-project.git
+git clone  https://github.com/piyushkumarshy000-spec/RAG--project
 cd rag-project
 ```
 

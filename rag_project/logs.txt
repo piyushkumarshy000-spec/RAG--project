@@ -1,0 +1,6 @@
+2026-04-19 22:20:37.952623 | Q: attendance | A: **Attendance Policy:**
+
+1. Minimum attendance required: 75%
+2. Consequences: Not eligible for exams if attendance is below 75%
+2026-04-19 22:42:01.162856 | Q: attendance | A: {'answer': '**Attendance Policy:**\n\n- Minimum attendance required: 75%\n- Consequence of falling below threshold: Detention', 'sources': ['sample.txt (chunk 0)', 'sample.txt (chunk 1)', 'sample.txt (chunk 4)']}
+2026-04-19 23:00:53.941738 | Q: attendance | A: {'answer': '**Attendance Policy:**\n\n- Minimum required attendance: 75%\n- Consequence of falling below threshold: Detention', 'sources': ['sample.txt (chunk 0)', 'sample.txt (chunk 1)', 'sample.txt (chunk 4)']}

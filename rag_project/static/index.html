@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RAG Chat UI</title>
+    <!DOCTYPE html>
+
+<html>
+<head>
+    <title>RAG Assistant</title>
+
+```
+<style>
+    body {
+        font-family: Arial;
+        background: #0f172a;
+        color: white;
+        display: flex;
+        justify-content: center;
+    }
+
+    .chat {
+        width: 650px;
+        margin-top: 40px;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+    }
+
+    .box {
+        background: #1e293b;
+        padding: 12px;
+        border-radius: 10px;
+        margin: 10px 0;
+    }
+
+    input[type="text"] {
+        width: 75%;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+    }
+
+    input[type="file"] {
+        margin-bottom: 10px;
+    }
+
+    button {
+        padding: 10px 15px;
+        background: #38bdf8;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .sources {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 5px;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<div class="chat">
+    <h1>RAG Assistant 🤖</h1>
+
+```
+<!-- Messages -->
+<div id="messages"></div>
+
+<!-- Upload Section -->
+<div class="box">
+    <input type="file" id="fileInput" accept=".pdf,.txt" />
+    <button onclick="uploadFile()">Upload 📄</button>
+</div>
+
+<!-- Input Section -->
+<div class="box">
+    <input id="question" type="text" placeholder="Ask something..." />
+    <button onclick="ask()">Send</button>
+</div>
+```
+
+</div>
+
+<script>
+
+function addMessage(sender, text) {
+    const div = document.createElement("div");
+    div.className = "box";
+    div.innerHTML = `<b>${sender}:</b><br>${text}`;
+    document.getElementById("messages").appendChild(div);
+}
+
+function formatText(text) {
+    return text
+        .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+        .replace(/\n/g, "<br>");
+}
+
+async function ask() {
+    const question = document.getElementById("question").value;
+
+    if (!question) {
+        addMessage("System", "⚠️ Please enter a question.");
+        return;
+    }
+
+    addMessage("You", question);
+
+    try {
+        const res = await fetch(`http://127.0.0.1:8000/ask?question=${encodeURIComponent(question)}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+            addMessage("System", "❌ Error: " + data.detail);
+            return;
+        }
+
+        let sources = "";
+        if (data.sources) {
+            sources = data.sources.map(s => `<div>${s}</div>`).join("");
+        }
+
+        addMessage(
+            "Bot",
+            formatText(data.answer) + `<div class="sources">${sources}</div>`
+        );
+
+    } catch (err) {
+        addMessage("System", "❌ Server error");
+    }
+
+    document.getElementById("question").value = "";
+}
+
+async function uploadFile() {
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        addMessage("System", "⚠️ Please select a file.");
+        return;
+    }
+
+    addMessage("You", "📤 Uploading: " + file.name);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            addMessage("System", "❌ Error: " + data.detail);
+            return;
+        }
+
+        addMessage(
+            "System",
+            `✅ Uploaded: ${file.name}<br>Chunks added: ${data.chunks_added}`
+        );
+
+    } catch (err) {
+        addMessage("System", "❌ Upload failed");
+    }
+
+    fileInput.value = "";
+}
+
+</script>
+
+</body>
+</html>
+
+
